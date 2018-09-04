@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+<link rel="stylesheet" type="text/css" href="css/main.css">
+<link rel="stylesheet" type="text/css" href="js/jquery/jquery-ui-1.12.1.custom/jquery-ui.css">
+<head>
+<title>Badge generator</title>
+
+<!-- jquery -->
+<script type="text/javascript" src="js/jquery/jquery-1.7.1.min.js"></script>
+<script type="text/javascript" src="js/jquery/jquery-ui-1.12.1.custom/jquery-ui.min.js"></script>
+<script type="text/javascript" src="js/jspdf/jspdf.js"></script>
+
+<!-- jspdf and plugins to be used -->
+<script type="text/javascript" src="js/jspdf/plugins/addimage.js"></script>
+<script type="text/javascript" src="js/jspdf/plugins/standard_fonts_metrics.js"></script>
+<script type="text/javascript" src="js/jspdf/plugins/split_text_to_size.js"></script>
+<script type="text/javascript" src="js/jspdf/jspdf.customfonts.min.js"></script>
+<script type="text/javascript" src="js/jspdf/default_vfs.js"></script>
+
+<!-- scripts for badgesGen -->
+<script type="text/javascript" src="data/csv_example.txt"></script>
+<script type="text/javascript" src="js/global.js"></script>
+<script type="text/javascript" src="js/helpers.js"></script>
+<script type="text/javascript" src="js/init.js"></script>
+<script type="text/javascript" src="js/pdfcomposer.js?v1"></script>
+<script type="text/javascript" src="js/customfonts.js"></script>
+
+<!-- In this style tag, custom font definition will be added dynamically -->
+<style id="fontDefinition"></style>
+
+</head>
+
+<body>
+    <!-- GENERAL SETUP LAYOUT -->
+    <div id="generalSetupLay">
+        <h1>General setup</h1>
+        <table class='gsLayTable'>
+            <tr>
+                <td class='leftColumn'>
+                    <div>
+                        <label for="uploadImgBtn">Badge background image</label>
+                        <button id='uploadImgBtn'>Upload</button>
+                        <span id='bgImgName'>(default.jpg)</span>
+                        <input id='bgFileId' type='file' accept="image/jpeg" hidden/>
+                    </div>
+                    <div>
+
+                        <label for="uploadCsvBtn">Competition csv file</label>
+                        <button id='uploadCsvBtn'>Upload</button>
+                        <span id='compCsvName'>(test.csv)</span>
+                        <span id='compCsvInfo'></span>
+                        <input id='csvFileId' type='file' accept=".csv" hidden/>
+                    </div>
+                    <div>
+                        <label for="badgePhysicalW">Badge width in millimeters</label>
+                        <input id='badgePhysicalW' class="tooltiptext" value='96'/> mm
+
+                    </div>
+                    <h2>Overview</h2>
+                    <div id='infoDiv'>
+                    </div>
+                    <br>
+                    <button id="finishPageSetup" class="bigButton">Done</button>
+                </td>
+                <td class='rightColumn'>
+                    <img id="imageBgPreview" src="img/default.jpg" alt="badge" style='width: 300px;'/>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+
+    <!-- EDIT BADGE AND LABELS LAYOUT -->
+    <div id="editLay">
+        <table class='editLayTable'>
+            <tr>
+                <td class='leftColumn'>
+                    <img id="editImage" src="" alt="background" style='width: 400px;'/>
+                    <span id="labelCompPreview">{{{Competitor Name}}}</span>
+                </td>
+                <td class='rightColumn'>
+                    <h1>Edit badge</h1>
+                    <div>
+                        <div id="controlGroup">
+                        <label for="labelTextSize">Text size (px)</label>
+                        <input value='45' id='labelTextSize' class="tooltiptext"/>
+                        <label for="labelTextColor">Text color</label>
+                        <input type='color' id='labelTextColor'/>
+
+                            <label for="labelBold" class="ui-widget boldCb">bold</label>
+                            <input id='labelBold' type='checkbox' class="ui-widget boldCb" checked/>
+                            <label for="labelMultiline" class="ui-widget">multiline</label>
+                            <input id='labelMultiline' type='checkbox' checked/>
+                            <label for="labelCentered" class="ui-widget">centered</label>
+                            <input id='labelCentered' type='checkbox' checked/>
+                            <input id='fontUpId' type='file' accept=".otf, .ttf" hidden/>
+                            <select id="fontSelect">
+                            </select>
+                        </div>
+                    </div>
+                    <br>
+                    <div id='generateBtnWrap'>
+                        <button id="generatePdfBtn" class="bigBtn"/>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- GENERATED PDF LAYOUT (previewing PDF in iframe without downloading the file) -->
+    <div id="pdfLay">
+        <h1>Here is your PDF</h1>
+        <iframe id='pdfFrame' style='width: 95%; height: 95%;' frameborder="0"></iframe>
+    </div>
+
+</body>
+</html>
