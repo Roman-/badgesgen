@@ -8,14 +8,10 @@ function onUploadFont() {
 
     if (file) {
         var nameAndExt = file.name.split('.');
-        if (nameAndExt.length == 2) {
-            Global.customFont.name = nameAndExt[0]
-            Global.customFont.ext = nameAndExt[1]
-            reader.readAsDataURL(file);
-            fontChanged();
-        } else {
-            console.error("font file incorrect");
-        }
+        Global.customFont.name = "custom";
+        Global.customFont.ext = nameAndExt[nameAndExt.length-1];
+        reader.readAsDataURL(file);
+        fontChanged();
     }
 }
 
