@@ -12,14 +12,10 @@ function generatePdf() {
 
     if (Global.customFont.base64 != null) {
         var nameAndExt = Global.customFont.name + '.' + Global.customFont.ext;
-        const fontType = 'normal';
         doc.addFileToVFS(nameAndExt, Global.customFont.base64);
-        doc.addFont(nameAndExt, Global.customFont.name, fontType);
-        doc.setFont(Global.customFont.name);
-    } else {
-        // one of default font families
-        doc.setFont(Global.customFont.name);
+        doc.addFont(nameAndExt, Global.customFont.name, 'normal');
     }
+    doc.setFont(Global.customFont.name);
     doc.setTextColor(Global.cnColor).setFontType(Global.cnFontWeight);
 
     for (var csvItr = 0; csvItr < Global.csvLines.length; ) {
