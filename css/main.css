@@ -16,6 +16,11 @@ table td {
 }
 #imageBgPreview {
     border: 1px solid black;
+    cursor: pointer;
+    width: 300px;
+}
+#imageBgPreview:hover {
+    opacity: .7;
 }
 
 #labelCompPreview {

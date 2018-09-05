@@ -1,6 +1,7 @@
 $(document).ready(function() {
     // upload buttons
     $('#uploadImgBtn').click(function(){$("#bgFileId").trigger("click")});
+    $('#imageBgPreview').click(function(){$("#bgFileId").trigger("click")});
     $('#bgFileId').change(onUploadImgChange);
     $('#uploadCsvBtn').click(function(){$("#csvFileId").trigger("click")});
     $('#csvFileId').change(onUploadCsvChange);
