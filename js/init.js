@@ -21,6 +21,8 @@ $(document).ready(function() {
     Global.compNameLabel = $('#labelCompPreview').draggable();
 
     // label edit elements
+    $('#namePreviewSelect').on('selectmenuchange',updateNamePreview);
+    initNamesPreview();
     $("#labelTextColor").change(function() {
         Global.compNameLabel.css("color", $(this).val());
         Global.cnColor = $(this).val();
@@ -31,7 +33,7 @@ $(document).ready(function() {
     }).trigger("change");
     $("#labelMultiline").change(function() {
         Global.cnMultiline = this.checked;
-        Global.compNameLabel.html(compLabelPreviewText(this.checked));
+        updateNamePreview();
     }).trigger("change");
     $("#labelCentered").change(function() {
         Global.cnCentered = this.checked;
@@ -122,6 +124,7 @@ function onUploadCsvChange(event) {
             Global.csvLines = reader.result.split(/\r\n|\r|\n/);
             $('#compCsvName').html(file.name);
             $('#compCsvInfo').html((Global.csvLines.length-1) + " competitors");
+            initNamesPreview();
         } else {
             $('#compCsvName').html("not valid");
             $('#compCsvInfo').html();
@@ -177,6 +180,29 @@ function onPageSetupDone() {
     $('#pdfLay').hide();
     $('#editImage').attr("src", $('#imageBgPreview')[0].src);
     locateLableInTheMid();
+}
+
+function initNamesPreview() {
+    var select = $('#namePreviewSelect').find('option').remove().end();
+
+    select.append($('<option>', { value: Global.compNameSample, text: Global.compNameSample, selected: true}));
+
+    pickInterestingNames(Global.csvLines).forEach(function(name) {
+        select.append($('<option>', { value: name, text: name }));
+    });
+}
+
+function updateNamePreview() {
+    // remember position before text changed
+    var oldLeft = Global.compNameLabel.position().left,
+        oldWidth = Global.compNameLabel.innerWidth();
+
+    // change text
+    Global.compNameLabel.html(compLabelPreviewText($("#namePreviewSelect").val(), $("#labelMultiline")[0].checked));
+
+    // keep it in the same position
+    if (Global.cnCentered)
+        Global.compNameLabel.css("left", oldLeft + (oldWidth - Global.compNameLabel.innerWidth())/2);
 }
 
 function locateLableInTheMid() {

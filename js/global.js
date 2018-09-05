@@ -18,6 +18,7 @@ Global.cnCentered = true; // Competitor Name centered or left justified
 Global.cnFontWeight = "normal"; // Competitor Name font weight ("bold" or "normal")
 Global.cnColor = null; // Competitor Name color
 Global.labelRect = null; // label positions and size info
+Global.compNameSample = "Firstname Lastname"; // default competitor name line
 
 // customFonts
 Global.customFont = {

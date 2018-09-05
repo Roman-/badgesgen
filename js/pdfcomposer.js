@@ -36,8 +36,11 @@ function generatePdf() {
                 doc.addImage(Global.imgDataUrl, 'image/jpeg', x, y_pic, Global.badgeW, Global.badgeH);
 
                 // draw competitor name line-by-line
-                var lineNumber = 0;
-                compName.split("\n").forEach(function(namePart) {
+                var lineNumber = 0, spaceIndex = compName.indexOf(' ');
+                var parts = Global.cnMultiline ?
+                    [compName.substring(0, spaceIndex), compName.substring(spaceIndex)] :
+                    [compName];
+                parts.forEach(function(namePart) {
                     drawTextInRect(doc, namePart,
                             x + Global.labelRect.x,
                             y + Global.labelRect.y + Global.labelRect.height + (lineNumber++) * (Global.labelRect.height + lineHeightProportion),
