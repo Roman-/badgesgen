@@ -30,6 +30,7 @@ table td {
     cursor: move;
     margin: 0;
     padding: 0;
+    line-height: 1.15em; /* maybe add to settings? */
 }
 
 .ui-icon-arrowstop-1-s {
