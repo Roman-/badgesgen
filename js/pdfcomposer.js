@@ -43,7 +43,7 @@ function generatePdf() {
 
 function drawLabel(doc, label, x, y, csvItr) {
     doc.setFont(label.font.name);
-    doc.setTextColor(label.color).setFontType(label.font.fontWeight);
+    doc.setTextColor(label.color).setFontType(label.fontWeight);
     var labelText = getLabelText(csvItr, label)
     var lineNumber = 0, spaceIndex = labelText.indexOf(' ');
     var parts = (label.multiline && (spaceIndex != -1)) ?

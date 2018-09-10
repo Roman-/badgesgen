@@ -31,7 +31,6 @@ function addLabel(source) {
         var elId = randomString();
         var elLabel = $("<label for='"+elId+"'>"+name+" </label>");
         element.attr("id", elId).trigger("change");
-        //controlGroup.append(element).append(elLabel).append("<br>");
         controlGroup.append(elLabel).append(element);
     }
 
