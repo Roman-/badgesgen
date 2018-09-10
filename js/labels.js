@@ -20,9 +20,7 @@ function createLabel(source) {
     return result;
 }
 
-
 function addLabel(source) {
-    // create label span and parameters
     var l = createLabel(source);
     $("#labelsWrap").append(l.div);
 
@@ -114,12 +112,12 @@ function addLabel(source) {
 function fontChanged(l, fontSelect, fontUpload, elControlBold) {
     const val = fontSelect.selectmenu("refresh").val();
     var boldControls = $.extend({}, elControlBold, $("label[for='" + elControlBold.attr('id') + "']"));
-    if (val == 0) { // custom
+    if (val == 0) { // custom font (don't allow to make it bold)
         // unmark "bold"
         elControlBold.prop('checked', false).trigger("change");
         boldControls.hide();
         fontUpload.click(); // init font loading dialog
-    } else { // existing
+    } else { // existing font
         l.font.base64 = null;
         l.font.name = val;
         l.div.css("font-family", fontSelect.children("option").filter(":selected").text());
@@ -140,7 +138,6 @@ function updateLabelPreview(l) {
     if (l.centered)
         l.div.css("left", oldLeft + (oldWidth - l.div.innerWidth())/2);
 }
-
 
 function locateLableInTheMid(div) {
     var badge = $("#editImage");

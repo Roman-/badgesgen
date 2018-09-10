@@ -5,8 +5,10 @@ $(document).ready(function() {
     $('#bgFileId').change(onUploadImgChange);
     $('#uploadCsvBtn').click(function(){$("#csvFileId").trigger("click")});
     $('#csvFileId').change(onUploadCsvChange);
-    $("#imageBgPreview").load(function() {onBadgeWidthChange();
-        setEnabled($("#finishPageSetup"), true, "Done");});
+    $("#imageBgPreview").load(function() {
+        onBadgeWidthChange();
+        setEnabled($("#finishPageSetup"), true, "Done");
+    });
     $('#uploadFont').click(function(){$("#fontUpId").trigger("click")});
 
     // finish
@@ -32,11 +34,9 @@ $(document).ready(function() {
     }).width($("#uploadCsvBtn").width());
 
 
-    // test
-   //setTimeout(function() {$("#finishPageSetup").trigger("click");}, 10);
-   // handle
+   // show errors explicitly
     window.onerror = function(errorMessage, errorUrl, errorLine) {
-        alert("msg: " + errorMessage + ", " + errorLine+ ", " + errorUrl);
+        alert("An error occured.\nInfo: " + errorMessage + ", " + errorLine+ ", " + errorUrl);
     }
 });
 

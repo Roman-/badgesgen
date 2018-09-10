@@ -22,8 +22,6 @@ function generatePdf() {
         for (var j = 0; j < Global.badgeRows; j++) {
             for (var i = 0; i < Global.badgeCols; i++) {
                 csvItr++;
-                // TODO improve name split for long names
-                //var compName = getCompetitorName(csvItr);
 
                 var x = x0 + i * Global.badgeW;
                 var y = y0 + j * Global.badgeH;
@@ -34,7 +32,6 @@ function generatePdf() {
                     if (label.visible && csvItr < Global.csvLines.length)
                         drawLabel(doc, label, x, y, csvItr);
                 });
-//return terminatePdf(doc); // TODO TEST
             }
         }
         if (csvItr < Global.csvLines.length)
@@ -66,7 +63,6 @@ function terminatePdf(doc) {
     var pdfDataAttr = doc.output('datauristring');
     $('#pdfFrame').attr('src', pdfDataAttr);
     $('#donwloadPdf').unbind('click').click(function() {doc.save("Badges.pdf")});
-    // test
     setLayout(LayoutsEnum.pdf);
 }
 
