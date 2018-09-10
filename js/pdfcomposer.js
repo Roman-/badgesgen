@@ -1,5 +1,4 @@
 function generatePdf() {
-    const lineHeightProportion = 1.15; // default for JSPdf
     const orientation = Global.album ? 'landscape' : 'portrait';
 
     var doc = new jsPDF(orientation, 'mm', "a4");
@@ -10,38 +9,28 @@ function generatePdf() {
     var x0 = (pageWidth - Global.badgeW * Global.badgeCols) / 2;
     var y0 = (pageHeight - Global.badgeH * Global.badgeRows) / 2;
 
-    if (Global.customFont.base64 != null) {
-        var nameAndExt = Global.customFont.name + '.' + Global.customFont.ext;
-        doc.addFileToVFS(nameAndExt, Global.customFont.base64);
-        doc.addFont(nameAndExt, Global.customFont.name, 'normal');
-    }
-    doc.setFont(Global.customFont.name);
-    doc.setTextColor(Global.cnColor).setFontType(Global.cnFontWeight);
+    // add all fonts in use to VFS
+    Global.labels.forEach(function(label) {
+        if (label.font.base64 != null) {
+            var nameAndExt = label.font.name + '.' + label.font.ext;
+            doc.addFileToVFS(nameAndExt, label.font.base64);
+            doc.addFont(nameAndExt, label.font.name, 'normal');
+        }
+    });
 
     for (var csvItr = 0; csvItr < Global.csvLines.length; ) {
         for (var j = 0; j < Global.badgeRows; j++) {
             for (var i = 0; i < Global.badgeCols; i++) {
                 csvItr++;
-                // TODO improve name split for long names
-                var compName = getCompetitorName(csvItr);
 
                 var x = x0 + i * Global.badgeW;
                 var y = y0 + j * Global.badgeH;
-                var y_pic = y0 + (j) * Global.badgeH;
 
-                doc.addImage(Global.imgDataUrl, 'image/jpeg', x, y_pic, Global.badgeW, Global.badgeH);
+                doc.addImage(Global.imgDataUrl, 'image/jpeg', x, y, Global.badgeW, Global.badgeH);
 
-                // draw competitor name line-by-line
-                var lineNumber = 0, spaceIndex = compName.indexOf(' ');
-                var parts = Global.cnMultiline ?
-                    [compName.substring(0, spaceIndex), compName.substring(spaceIndex)] :
-                    [compName];
-                parts.forEach(function(namePart) {
-                    drawTextInRect(doc, namePart,
-                            x + Global.labelRect.x,
-                            y + Global.labelRect.y + Global.labelRect.height + (lineNumber++) * (Global.labelRect.height + lineHeightProportion),
-                            Global.labelRect.width,
-                            Global.labelRect.height);
+                Global.labels.forEach(function(label) {
+                    if (label.visible && csvItr < Global.csvLines.length)
+                        drawLabel(doc, label, x, y, csvItr);
                 });
             }
         }
@@ -52,13 +41,32 @@ function generatePdf() {
     terminatePdf(doc);
 }
 
-function terminatePdf(doc) {
-    var pdfDataAttr = doc.output('datauristring');
-    $('iframe').attr('src', pdfDataAttr);
-    doc.save("Badges.pdf");
+function drawLabel(doc, label, x, y, csvItr) {
+    doc.setFont(label.font.name);
+    doc.setTextColor(label.color).setFontType(label.fontWeight);
+    var labelText = getLabelText(csvItr, label)
+    var lineNumber = 0, spaceIndex = labelText.indexOf(' ');
+    var parts = (label.multiline && (spaceIndex != -1)) ?
+        [labelText.substring(0, spaceIndex), labelText.substring(spaceIndex+1)] :
+        [labelText];
+    parts.forEach(function(namePart) {
+        drawTextInRect(
+            doc, namePart, label.centered,
+            x + label.rect.x,
+            y + label.rect.y + label.rect.height + (lineNumber++) * (label.rect.height + Global.lineHeightProportion),
+            label.rect.width,
+            label.rect.height);
+    });
 }
 
-function drawTextInRect(doc, text, x, y, rectWidth, rectHeight) {
+function terminatePdf(doc) {
+    var pdfDataAttr = doc.output('datauristring');
+    $('#pdfFrame').attr('src', pdfDataAttr);
+    $('#donwloadPdf').unbind('click').click(function() {doc.save("Badges.pdf")});
+    setLayout(LayoutsEnum.pdf);
+}
+
+function drawTextInRect(doc, text, centered, x, y, rectWidth, rectHeight) {
     // adjust Text size based on rectWidth
     var pt2mm = 25.4 / 72;
     var textSize = rectHeight / pt2mm;
@@ -66,7 +74,7 @@ function drawTextInRect(doc, text, x, y, rectWidth, rectHeight) {
 
     var realTextWidth = doc.getStringUnitWidth(text) * textSize * pt2mm;
 
-    if (Global.cnCentered)
+    if (centered)
         x -= (realTextWidth - rectWidth)/2;
 
     doc.text(x, y ,text);

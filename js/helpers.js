@@ -12,8 +12,10 @@ function getDataUri(url, callback) {
     image.src = url;
 }
 
-function compLabelPreviewText(name, split) {
-    return split ? name.replace(' ', '<br>') : name; // only replace first space making exactly 2 lines
+function compLabelPreviewText(text, split) {
+    if (split)
+        text = text.replace(' ', '<br>'); // split after first space
+    return text.replace(/\s/gm,"&nbsp;"); // prevent next lines split
 }
 
 // returns TRUE if competition csv file is valid
@@ -25,10 +27,21 @@ function validateCsv(csv) {
 // Returns empty string for empty badges if index is too high
 function getCompetitorName(index) {
     var compName = (index >= Global.csvLines.length || index < 1 || Global.csvLines[index].indexOf(',') == -1)
-        ? "" : Global.csvLines[index].split(",")[1];
+        ? "(undefined)" : Global.csvLines[index].split(",")[1];
     if (compName.indexOf(' (') != -1)
         compName = compName.split(' (')[0];
     return compName;
+}
+
+function getCompetitorCountry(index) {
+    return (index >= Global.csvLines.length || index < 1 || Global.csvLines[index].indexOf(',') == -1)
+        ? "(undefined)" : Global.csvLines[index].split(",")[2];
+}
+
+function getCompetitorWcaId(index) {
+    var wcaId = (index >= Global.csvLines.length || index < 1 || Global.csvLines[index].indexOf(',') == -1)
+        ? "(undefined)" : Global.csvLines[index].split(",")[3];
+    return (wcaId.length == 0) ? stringForNoWcaId() : wcaId;
 }
 
 function pickInterestingNames(csvLines) {
@@ -69,5 +82,28 @@ function removeDuplicates(arr) {
 function splitInTwo(n) {
     const spaceIndex = n.indexOf(' ');
     return [n.substring(0, spaceIndex), n.substring(spaceIndex)];
+}
+
+function randomString() {
+    return Math.random().toString(36).replace(/[^a-z]+/g, '_').substr(1, 6);
+}
+
+function changeVisibility(obj, visible) {
+    return visible ? obj.show() : obj.hide();
+}
+
+// string that appears instead of WCA ID if the competitor doesn't have one TODO specify in settings
+function stringForNoWcaId() {
+    return "";
+    //return "newcomer";
+}
+
+// set element (button) enabled or disabled
+function setEnabled(element, enabled, defaultHtml = "OK") {
+    element.html(enabled ? defaultHtml : "Please wait...");
+    if (enabled)
+        element.prop('disabled', false);
+    else
+        element.attr("disabled", "disabled");
 }
 

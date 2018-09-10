@@ -5,113 +5,54 @@ $(document).ready(function() {
     $('#bgFileId').change(onUploadImgChange);
     $('#uploadCsvBtn').click(function(){$("#csvFileId").trigger("click")});
     $('#csvFileId').change(onUploadCsvChange);
-    $("#imageBgPreview").load(onBadgeWidthChange);
+    $("#imageBgPreview").load(function() {
+        onBadgeWidthChange();
+        setEnabled($("#finishPageSetup"), true, "Done");
+    });
     $('#uploadFont').click(function(){$("#fontUpId").trigger("click")});
-    $('#fontUpId').change(onUploadFont);
 
     // finish
     $('#finishPageSetup').click(onPageSetupDone);
 
     // setup layouts
-    $('#generalSetupLay').show();
-    $('#editLay').hide();
-    $('#pdfLay').hide();
+    setLayout(LayoutsEnum.set);
 
-    // making label draggable
-    Global.compNameLabel = $('#labelCompPreview').draggable();
-
-    // label edit elements
-    $('#namePreviewSelect').on('selectmenuchange',updateNamePreview);
-    initNamesPreview();
-    $("#labelTextColor").change(function() {
-        Global.compNameLabel.css("color", $(this).val());
-        Global.cnColor = $(this).val();
-    }).trigger("change");
-    $("#labelBold").change(function() {
-        Global.cnFontWeight = this.checked?"bold":"normal";
-        Global.compNameLabel.css("font-weight", Global.cnFontWeight);
-    }).trigger("change");
-    $("#labelMultiline").change(function() {
-        Global.cnMultiline = this.checked;
-        updateNamePreview();
-    }).trigger("change");
-    $("#labelCentered").change(function() {
-        Global.cnCentered = this.checked;
-        Global.compNameLabel.css("text-align",this.checked ? "center":"left");
-    }).trigger("change");
-
-    // generate pdf
+    // buttons
     $("#generatePdfBtn").click(onGeneratePdfClick);
+    $("#backToEditor").click(function() {setLayout(LayoutsEnum.edit)});
+    $("#backToPageSet").click(function() {setLayout(LayoutsEnum.set)});
+    $("button").button().css({ "border": "1px solid blue"});
+    setEnabled($("#generatePdfBtn"), true, "Generate PDF <span class='ui-icon ui-icon-circle-check'></span>");
+    setEnabled($("#finishPageSetup"), $("#imageBgPreview").complete, "Done");
 
-    // ui elements
-    $("button").button();
-    $(".bigButton").css({
-       "background":"#55f",
-       "font-size": "125%",
-       "font-weight": "bold",
-       "color": "white",
-    });
 
     // spinners
     $('#badgePhysicalW').spinner({
         min: 1,
         max: 300,
         stop: function( event, ui ) { onBadgeWidthChange(); },
-    }).spinner("stepUp").spinner("stepDown"); // trigger spinner CHANGE event
+    }).width($("#uploadCsvBtn").width());
 
-    $('#labelTextSize').spinner({
-        min: 1,
-        stop: function( event, ui ) {
-            var val = $(this).spinner("value");
-            Global.compNameLabel.css("font-size", val + "px");
-            Global.cnSize = val;
-        },
-    }).spinner("stepUp").spinner("stepDown"); // trigger spinner CHANGE event
 
-    $( "#controlGroup" ).controlgroup({
-      "direction": "vertical"
-    });
-
-    // fonts setup
-    Global.predefinedFonts.forEach(function(font) {
-        $('#fontSelect').append($('<option>', {
-            value: font,
-            text: font.charAt(0).toUpperCase() + font.substr(1),
-        }));
-    });
-    $('#fontSelect').append($('<option>', { value: 0, text: "custom..." }))
-        .on('selectmenuchange',fontChanged).selectmenu("refresh");
-
-    // trigger setup elements change on start
-    fontChanged();
-    showGenerateButton(true);
-
+   // show errors explicitly
+    window.onerror = function(errorMessage, errorUrl, errorLine) {
+        alert("An error occured.\nInfo: " + errorMessage + ", " + errorLine+ ", " + errorUrl);
+    }
 });
 
-function fontChanged() {
-    const val = $('#fontSelect').selectmenu("refresh").val();
-    if (val == 0) { // custom
-        // unmark "bold"
-        $(".boldCb").prop('checked', false).change().hide();
-        $("#controlGroup").controlgroup("refresh");
-        $('#fontUpId').click(); // init font loading dialog
-    } else { // existing
-        Global.customFont.base64 = null;
-        Global.customFont.name = val;
-        Global.compNameLabel.css("font-family", $("#fontSelect").children("option").filter(":selected").text());
-        $(".boldCb").show();
-    }
-}
 
 function onUploadImgChange() {
     var file = $('#bgFileId')[0].files[0];
     var reader  = new FileReader();
     reader.addEventListener("load", function () {
         $('#imageBgPreview')[0].src = reader.result;
+        $('#editImage')[0].src = reader.result;
         $('#bgImgName').html(file.name);
     }, false);
-    if (file)
+    if (file) {
+        setEnabled($("#finishPageSetup"), false);
         reader.readAsDataURL(file);
+    }
 }
 
 function onUploadCsvChange(event) {
@@ -124,7 +65,6 @@ function onUploadCsvChange(event) {
             Global.csvLines = reader.result.split(/\r\n|\r|\n/);
             $('#compCsvName').html(file.name);
             $('#compCsvInfo').html((Global.csvLines.length-1) + " competitors");
-            initNamesPreview();
         } else {
             $('#compCsvName').html("not valid");
             $('#compCsvInfo').html();
@@ -164,7 +104,7 @@ function onBadgeWidthChange() {
     var info = "";
     info += "Your badges are <b>" + w + "mm x " + h + "mm</b>.<br>";
     info += "We can place " + mathString + " badges on the <b>A4</b> sheet in <b>" + orientString + "</b> orientation.";
-    $("#infoDiv").html(info).effect( "highlight", {color: '#afa'}, 300 );;
+    $("#infoDiv").html(info).effect( "highlight", {color: '#afa'}, 300 );
 
     // saving settings
     Global.album = album;
@@ -175,11 +115,15 @@ function onBadgeWidthChange() {
 }
 
 function onPageSetupDone() {
-    $('#generalSetupLay').hide();
-    $('#editLay').show();
-    $('#pdfLay').hide();
-    $('#editImage').attr("src", $('#imageBgPreview')[0].src);
-    locateLableInTheMid();
+    $("#labelsMenuWrap").accordion({ active: false, collapsible: true });
+    setLayout(LayoutsEnum.edit);
+    $('#editImage').attr("src", $('#imageBgPreview')[0].src).load(function(){
+        if (Global.labels.length == 0)
+            ["name", "country", "wcaid"].forEach(function(source) {addLabel(source)});
+    });
+    // label edit elements
+    initNamesPreview();
+    $('#namePreviewSelect').selectmenu().unbind('selectmenuchange').on('selectmenuchange', updateNamePreview).trigger("selectmenuchange").selectmenu("refresh");
 }
 
 function initNamesPreview() {
@@ -193,31 +137,28 @@ function initNamesPreview() {
 }
 
 function updateNamePreview() {
-    // remember position before text changed
-    var oldLeft = Global.compNameLabel.position().left,
-        oldWidth = Global.compNameLabel.innerWidth();
+    Global.labels.forEach(function(label) {
+        if (label.source == "name") {
+            // remember position before text changed
+            var oldLeft = label.div.position().left,
+                oldWidth = label.div.innerWidth();
 
-    // change text
-    Global.compNameLabel.html(compLabelPreviewText($("#namePreviewSelect").val(), $("#labelMultiline")[0].checked));
+            // change text
+            label.div.html(getCompetitorNamePreview(label));
 
-    // keep it in the same position
-    if (Global.cnCentered)
-        Global.compNameLabel.css("left", oldLeft + (oldWidth - Global.compNameLabel.innerWidth())/2);
-}
-
-function locateLableInTheMid() {
-    var badge = $("#editImage");
-    var badgePos = badge.position();
-    var posTop = badgePos.top + (badge.innerHeight() - Global.compNameLabel.innerHeight())/2;
-    var posLeft = badgePos.left + (badge.innerWidth() - Global.compNameLabel.innerWidth())/2;
-    Global.compNameLabel.css({
-        top: (posTop + 'px'),
-        left: (posLeft + 'px')
+            // keep it in the same position
+            if (label.centered)
+                label.div.css("left", oldLeft + (oldWidth - label.div.innerWidth())/2);
+        }
     });
 }
 
+function getCompetitorNamePreview(label) {
+    return compLabelPreviewText($("#namePreviewSelect").val(), label.multiline);
+}
+
 function onGeneratePdfClick() {
-    showGenerateButton(false);
+    setEnabled($("#generatePdfBtn"), false, "Generate PDF <span class='ui-icon ui-icon-circle-check'></span>");
     setTimeout(function(){
         getDataUri($('#imageBgPreview')[0].src, onImageUriLoaded)
     }, 10);
@@ -225,34 +166,38 @@ function onGeneratePdfClick() {
 
 function onImageUriLoaded(dataUri) {
     Global.imgDataUrl = dataUri;
-    Global.labelRect = labelRect();
+    // load rects for all labels
+    Global.labels.forEach(function(label) {
+        label.rect = labelRect(label);
+    });
 
     generatePdf();
 
-    showGenerateButton(true);
+    setEnabled($("#generatePdfBtn"), true, "Generate PDF <span class='ui-icon ui-icon-circle-check'></span>");
 }
 
-function showGenerateButton(v) {
-    if (v)
-        $("#generatePdfBtn").html("Generate PDF <span class='ui-icon ui-icon-arrowstop-1-s'></span>").prop('disabled', false);
-    else
-        $("#generatePdfBtn").html("Please wait...").attr("disabled", "disabled");
-}
-
-function labelRect() {
+// returns rect: {x,y,w,h}
+// x,y: label X and Y positions in millimeters, from top-left corner of the badge
+function labelRect(label) {
     var badge = $("#editImage");
 
-    var badgePos = badge.position();
+    var badgePos = badge.offset();
     var picHeight = badge.height();
     var picWidth = badge.width();
 
-    var labelPos = Global.compNameLabel.position();
-    var labelW = Global.compNameLabel.innerWidth();
+    var labelPos = label.div.offset();
+    var labelW = label.div.innerWidth();
 
     return {
             x: (labelPos.left - badgePos.left) * Global.badgeW / picWidth,
             y: (labelPos.top - badgePos.top) * Global.badgeH / picHeight,
             width: labelW * Global.badgeW / picWidth,
-            height: Global.cnSize * Global.badgeH / picHeight
+            height: label.size * Global.badgeH / picHeight
     };
+}
+
+function setLayout(lay) {
+    changeVisibility($('#generalSetupLay'), (lay == LayoutsEnum.set));
+    changeVisibility($('#editLay'), (lay == LayoutsEnum.edit));
+    changeVisibility($('#pdfLay'), (lay == LayoutsEnum.pdf));
 }

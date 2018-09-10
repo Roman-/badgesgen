@@ -26,38 +26,46 @@
 <script type="text/javascript" src="js/init.js?v1"></script>
 <script type="text/javascript" src="js/pdfcomposer.js?v2"></script>
 <script type="text/javascript" src="js/customfonts.js"></script>
-
-<!-- In this style tag, custom font definition will be added dynamically -->
-<style id="fontDefinition"></style>
+<script type="text/javascript" src="js/labels.js?v1"></script>
+<script type="text/javascript" src="js/tooltips.js"></script>
 
 </head>
 
 <body>
     <!-- GENERAL SETUP LAYOUT -->
     <div id="generalSetupLay">
-        <h1>General setup</h1>
+        <h1>Badge generator v1.0</h1>
+        <div id='description'>Loading... </div>
         <table class='gsLayTable'>
             <tr>
                 <td class='leftColumn'>
-                    <div>
-                        <label for="uploadImgBtn">Badge background image</label>
-                        <button id='uploadImgBtn'>Upload</button>
-                        <span id='bgImgName'>(default.jpg)</span>
-                        <input id='bgFileId' type='file' accept="image/jpeg" hidden/>
-                    </div>
-                    <div>
 
-                        <label for="uploadCsvBtn">Competition csv file</label>
-                        <button id='uploadCsvBtn'>Upload</button>
-                        <span id='compCsvName'>(test.csv)</span>
-                        <span id='compCsvInfo'></span>
-                        <input id='csvFileId' type='file' accept=".csv" hidden/>
-                    </div>
-                    <div>
-                        <label for="badgePhysicalW">Badge width in millimeters</label>
+                    <table class='pageSetupControls'>
+                        <tr>
+                            <h2>General setup</h2>
+                            <td class='pageSetupControls'>Badge background image <img class='help' id='help-bgimg'/></td>
+                            <td>
+                                <button id='uploadImgBtn'>Upload</button>
+                                <span id='bgImgName'>(default.jpg)</span>
+                                <input id='bgFileId' type='file' accept="image/jpeg" hidden/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Competition csv file <img class='help' id='help-csvfile'/></td>
+                            <td>
+                                <button id='uploadCsvBtn'>Upload</button>
+                                <span id='compCsvName'>(test.csv)</span>
+                                <span id='compCsvInfo'></span>
+                                <input id='csvFileId' type='file' accept=".csv" hidden/>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Badge width in millimeters <img class='help' id='help-sizemm'/></td>
+                            <td>
                         <input id='badgePhysicalW' class="tooltiptext" value='96'/> mm
-
-                    </div>
+                            </td>
+                        </tr>
+                    </table>
                     <h2>Overview</h2>
                     <div id='infoDiv'>
                     </div>
@@ -74,37 +82,24 @@
 
     <!-- EDIT BADGE AND LABELS LAYOUT -->
     <div id="editLay">
+    <div id='labelsWrap'> </div>
         <table class='editLayTable'>
             <tr>
                 <td class='leftColumn'>
                     <img id="editImage" src="" alt="background" style='width: 400px;'/>
-                    <span id="labelCompPreview">{{{Competitor Name}}}</span>
                 </td>
                 <td class='rightColumn'>
-                    <h1>Edit badge</h1>
-                    <div>
-                        <div id="controlGroup">
-                        <label for="labelTextSize">Text size (px)</label>
-                        <input value='45' id='labelTextSize' class="tooltiptext"/>
-                        <label for="labelTextColor">Text color</label>
-                        <input type='color' id='labelTextColor'/>
+                        <div id='labelsMenuWrap'> </div>
 
-                            <label for="labelBold" class="ui-widget boldCb">bold</label>
-                            <input id='labelBold' type='checkbox' class="ui-widget boldCb" checked/>
-                            <label for="labelMultiline" class="ui-widget">multiline</label>
-                            <input id='labelMultiline' type='checkbox' checked/>
-                            <label for="labelCentered" class="ui-widget">centered</label>
-                            <input id='labelCentered' type='checkbox' checked/>
-                            <input id='fontUpId' type='file' accept=".otf, .ttf" hidden/>
-                            <select id="fontSelect"></select>
-                            <label for="namePreviewSelect" class="ui-widget">Preview name:</label>
-                            <select id="namePreviewSelect"></select>
+                        <label for="namePreviewSelect" class="ui-widget">Preview name:</label>
+                        <select id="namePreviewSelect"></select>
+                        <hr>
+                        <div id='generateBtnWrap'>
+                            <button id="backToPageSet" class="bigBtn">
+                                <span class='ui-icon ui-icon-arrowthick-1-w'></span>Page setup
+                            </button>
+                            <button id="generatePdfBtn"></button>
                         </div>
-                    </div>
-                    <br>
-                    <div id='generateBtnWrap'>
-                        <button id="generatePdfBtn" class="bigBtn"></button>
-                    </div>
                 </td>
             </tr>
         </table>
@@ -112,9 +107,12 @@
 
     <!-- GENERATED PDF LAYOUT (previewing PDF in iframe without downloading the file) -->
     <div id="pdfLay">
-        <h1>Here is your PDF</h1>
-        <iframe id='pdfFrame' style='width: 95%; height: 95%;' frameborder="0"></iframe>
+        <button id='backToEditor'><span class='ui-icon ui-icon-arrowthick-1-w'></span>Editor</button>
+        <button id='donwloadPdf'><span class='ui-icon ui-icon-arrowstop-1-s'></span>Download</button>
+        <br>
+        <iframe id='pdfFrame'></iframe>
     </div>
 
+    <div id='stylesWrap'></div>
 </body>
 </html>
