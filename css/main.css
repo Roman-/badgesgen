@@ -1,6 +1,6 @@
 html, body {
-    height: 100%;
-    margin-top: 0;
+    height: 97%;
+    width: 97%;
     font-family: "Trebuchet MS", sans-serif;
 }
 table.gsLayTable, td.gsLayTable {
@@ -12,8 +12,10 @@ table td {
 }
 
 #pdfLay {
-    height: 90%;
+    height: 100%;
+    width: 100%;
 }
+
 #imageBgPreview {
     border: 1px solid black;
     cursor: pointer;
@@ -23,7 +25,7 @@ table td {
     opacity: .7;
 }
 
-#labelCompPreview {
+.label {
     position: absolute;
     text-align: center;
     border: 1px dashed #aaa;
@@ -31,10 +33,47 @@ table td {
     margin: 0;
     padding: 0;
     line-height: 1.15em; /* maybe add to settings? */
+    display: inline-block;
+    white-space: nowrap;
 }
 
-.ui-icon-arrowstop-1-s {
-  -ms-transform: scale(1.3); /* IE 9 */
-  -webkit-transform: scale(1.3); /* Chrome, Safari, Opera */
-  transform: scale(1.3);
+.label:hover {
+    border: 1px dashed #200;
+}
+
+#labelsWrap {
+    position: absolute;
+}
+
+table.pageSetupControls td {
+    vertical-align: middle;
+}
+
+#pdfFrame {
+    width: 100%;
+    height: 97%;
+}
+
+#generatePdfBtn {
+    float: right;
+}
+
+.bigButton {
+   background:#55f;
+   font-size: 125%;
+   font-weight: bold;
+   color: "white";
+}
+
+.help {
+    width: 16px;
+    height: 16px;
+    display: inline-block;
+    vertical-align: middle;
+    opacity: 0.5;
+}
+
+.help:hover {
+    opacity: 1;
+    cursor: pointer;
 }

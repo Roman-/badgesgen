@@ -11,20 +11,37 @@ Global.badgeCols = 0; // how many badge to fit in page horisontally
 Global.badgeRows = 0; // how many badge to fit in page vertically
 
 // competition label setup
-Global.compNameLabel = null; // JQuery instance for draggable label
-Global.cnSize = 0; // Competitor Name font size
-Global.cnMultiline = false; // Competitor name and surname on separate lines
-Global.cnCentered = true; // Competitor Name centered or left justified
-Global.cnFontWeight = "normal"; // Competitor Name font weight ("bold" or "normal")
-Global.cnColor = null; // Competitor Name color
-Global.labelRect = null; // label positions and size info
+Global.labels = [];
 Global.compNameSample = "Firstname Lastname"; // default competitor name line
 
-// customFonts
-Global.customFont = {
-    base64: null, // uploaded font base64-encoded
-    ext: "", // extention: otf, ttf or woff
-    name: "" // font name
-}
-
 Global.predefinedFonts = ["helvetica", "courier", "times"];
+Global.lineHeightProportion = 1.15; // default for JSPdf TODO add to settings
+var LayoutsEnum = Object.freeze({"set":1, "edit":2, "pdf":3});
+
+// default settings for labels
+Global.defaults = {
+    name : {
+        size: 45,
+        multiline: true,
+        centered: true,
+        bold: true,
+        color: "#000000",
+        fontName: "helvetica"
+    },
+    country : {
+        size: 35,
+        multiline: false,
+        centered: true,
+        bold: false,
+        color: "#000044",
+        fontName: "times"
+    },
+    wcaid : {
+        size: 25,
+        multiline: false,
+        centered: false,
+        bold: false,
+        color: "#000011",
+        fontName: "courier"
+    }
+};

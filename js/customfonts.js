@@ -1,25 +1,28 @@
-function onUploadFont() {
-    var file = $('#fontUpId')[0].files[0];
+function onUploadFont(l, uploader) {
+    var file = uploader.files[0];
     var reader = new FileReader();
 
     reader.addEventListener("load", function () {
-        applyFont(reader.result);
+        applyFont(l, reader.result);
     }, false);
 
     if (file) {
         var nameAndExt = file.name.split('.');
-        Global.customFont.name = "custom";
-        Global.customFont.ext = nameAndExt[nameAndExt.length-1];
+        l.font.name = nameAndExt[0];
+        l.font.ext = nameAndExt[nameAndExt.length-1];
         reader.readAsDataURL(file);
-        fontChanged();
     }
 }
 
-function applyFont(formatAndData) {
-    Global.customFont.base64 = formatAndData.substr(formatAndData.indexOf(',') + 1);
-    const fontName = "CustomFontFamily";
+function applyFont(l, formatAndData) {
+    l.font.base64 = formatAndData.substr(formatAndData.indexOf(',') + 1);
     var definition = "@font-face {font-family: "
-                + fontName + "; src: url('" + formatAndData + "'); format('"+Global.customFont.ext+"');}";
-    $("#fontDefinition").html(definition);
-    Global.compNameLabel.css("font-family", fontName);
+                + l.font.name + "; src: url('" + formatAndData + "'); format('"+l.font.ext+"');}";
+    var styleId = "fontDef" + l.font.name;
+    if ($("#" + styleId).length == 0) {
+        // we haven't defined this font earlier
+        var style = $("<style></style>").attr('id', styleId).html(definition);
+        $("#stylesWrap").append(style);
+    }
+    l.div.css("font-family", l.font.name);
 }
