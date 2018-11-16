@@ -2,13 +2,14 @@
 function Global() { }
 
 // page setup
-Global.csvLines = csvFileExampleShort.split(/\r\n|\r|\n/); // csv file
+Global.csvLines = extractCsvLines(csvFileExampleShort); // csv file
 Global.imgDataUrl = null; // Badge image URI
 Global.album = false; // orientation: album(true) or portrait(false)
 Global.badgeW = 0;    // badge physical width in millimeters
 Global.badgeH = 0;    // badge physical height in millimeters
 Global.badgeCols = 0; // how many badge to fit in page horisontally
 Global.badgeRows = 0; // how many badge to fit in page vertically
+Global.badgeExtraPages = 0; // how many extra pages with empty badges to print
 
 // competition label setup
 Global.labels = [];

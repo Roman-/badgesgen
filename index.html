@@ -21,8 +21,8 @@
 
 <!-- scripts for badgesGen -->
 <script type="text/javascript" src="data/csv_example.txt"></script>
-<script type="text/javascript" src="js/global.js?v1"></script>
 <script type="text/javascript" src="js/helpers.js?v1"></script>
+<script type="text/javascript" src="js/global.js?v1"></script>
 <script type="text/javascript" src="js/init.js?v1"></script>
 <script type="text/javascript" src="js/pdfcomposer.js?v2"></script>
 <script type="text/javascript" src="js/customfonts.js"></script>
@@ -34,7 +34,7 @@
 <body>
     <!-- GENERAL SETUP LAYOUT -->
     <div id="generalSetupLay">
-        <h1>Badge generator v1.0</h1>
+        <h1>Badge generator v1.1</h1>
         <div id='description'>Loading... </div>
         <table class='gsLayTable'>
             <tr>
@@ -63,6 +63,12 @@
                             <td>Badge width in millimeters <img class='help' id='help-sizemm'/></td>
                             <td>
                         <input id='badgePhysicalW' class="tooltiptext" value='96'/> mm
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Add empty badges <img class='help' id='help-empty'/></td>
+                            <td>
+                        <input id='badgeExtraPages' class="tooltiptext" value='0'/> pages
                             </td>
                         </tr>
                     </table>

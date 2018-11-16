@@ -32,6 +32,11 @@ $(document).ready(function() {
         max: 300,
         stop: function( event, ui ) { onBadgeWidthChange(); },
     }).width($("#uploadCsvBtn").width());
+    $('#badgeExtraPages').spinner({
+        min: 0,
+        max: 100,
+        stop: function( event, ui ) { onBadgeExtraChange(); },
+    }).width($("#uploadCsvBtn").width());
 
 
    // show errors explicitly
@@ -62,9 +67,10 @@ function onUploadCsvChange(event) {
         var str = reader.result;
         if (validateCsv(str)) {
             // save
-            Global.csvLines = reader.result.split(/\r\n|\r|\n/);
+            Global.csvLines = extractCsvLines(reader.result);
             $('#compCsvName').html(file.name);
-            $('#compCsvInfo').html((Global.csvLines.length-1) + " competitors");
+            $('#compCsvInfo').html((Global.csvLines.length) + " competitors");
+            onBadgeWidthChange(); // force overview change
         } else {
             $('#compCsvName').html("not valid");
             $('#compCsvInfo').html();
@@ -103,8 +109,7 @@ function onBadgeWidthChange() {
     const orientString = (album?"album":"portrait");
     var info = "";
     info += "Your badges are <b>" + w + "mm x " + h + "mm</b>.<br>";
-    info += "We can place " + mathString + " badges on the <b>A4</b> sheet in <b>" + orientString + "</b> orientation.";
-    $("#infoDiv").html(info).effect( "highlight", {color: '#afa'}, 300 );
+    info += "We can place " + mathString + " badges on the <b>A4</b> sheet in <b>" + orientString + "</b> orientation.<br>";
 
     // saving settings
     Global.album = album;
@@ -112,6 +117,21 @@ function onBadgeWidthChange() {
     Global.badgeH = h;
     Global.badgeCols = album ? nWidthAlbum : nWidthPortrait;
     Global.badgeRows = album ? nHeightAlbum : nHeightPortrait;
+
+
+    const competitors = Global.csvLines.length;
+    const badgesPerPage = Global.badgeRows * Global.badgeCols;
+    const totalPages = Math.ceil(competitors/badgesPerPage) + Global.badgeExtraPages;
+    const emptyBadges = totalPages * badgesPerPage - competitors;
+    info += "Output PDF will have "+totalPages+ " pages with "+competitors+" filled and " + emptyBadges + " empty badges.";
+
+    $("#infoDiv").html(info).effect( "highlight", {color: '#afa'}, 300 );
+
+}
+
+function onBadgeExtraChange() {
+    Global.badgeExtraPages = parseInt($("#badgeExtraPages").spinner( "value" ));
+    onBadgeWidthChange(); // force overview update
 }
 
 function onPageSetupDone() {

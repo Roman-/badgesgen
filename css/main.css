@@ -1,4 +1,6 @@
 html, body {
+    color: white;
+    background-color: black;
     height: 97%;
     width: 97%;
     font-family: "Trebuchet MS", sans-serif;

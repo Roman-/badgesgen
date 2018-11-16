@@ -18,10 +18,13 @@ function generatePdf() {
         }
     });
 
-    for (var csvItr = 0; csvItr < Global.csvLines.length; ) {
+
+    const badgesPerPage = Global.badgeRows * Global.badgeCols;
+    const totalPages = Math.ceil((Global.csvLines.length)/badgesPerPage) + Global.badgeExtraPages;
+    const totalBadges = totalPages * badgesPerPage;
+    for (var csvItr = 0; csvItr < totalBadges; ) {
         for (var j = 0; j < Global.badgeRows; j++) {
             for (var i = 0; i < Global.badgeCols; i++) {
-                csvItr++;
 
                 var x = x0 + i * Global.badgeW;
                 var y = y0 + j * Global.badgeH;
@@ -32,9 +35,10 @@ function generatePdf() {
                     if (label.visible && csvItr < Global.csvLines.length)
                         drawLabel(doc, label, x, y, csvItr);
                 });
+                csvItr++;
             }
         }
-        if (csvItr < Global.csvLines.length)
+        if (csvItr < totalBadges)
             doc.addPage();
     }
     // Output as Data URI

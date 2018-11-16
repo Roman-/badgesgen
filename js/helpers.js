@@ -23,10 +23,26 @@ function validateCsv(csv) {
     return csv.startsWith("Status,Name,Country,WCA ID");
 }
 
+function validateCsvLine(l) {
+    const minLength = 10; // amount of commas
+    return ((l.length > minLength) && (l.indexOf("Status,Name") == -1));
+}
+function extractCsvLines(s) {
+    var result = [];
+    var arr = s.split(/\r\n|\r|\n/);
+    arr.forEach(function(line) {
+        if (validateCsvLine(line)) {// not first and not empty
+            result.push(line);
+            console.log("pushing: " + line);
+        }
+    });
+    return result;
+}
+
 // Returns competitor name from Global.csv by index without local name in parantheses;
 // Returns empty string for empty badges if index is too high
 function getCompetitorName(index) {
-    var compName = (index >= Global.csvLines.length || index < 1 || Global.csvLines[index].indexOf(',') == -1)
+    var compName = (index >= Global.csvLines.length || Global.csvLines[index].indexOf(',') == -1)
         ? "(undefined)" : Global.csvLines[index].split(",")[1];
     if (compName.indexOf(' (') != -1)
         compName = compName.split(' (')[0];
@@ -34,12 +50,12 @@ function getCompetitorName(index) {
 }
 
 function getCompetitorCountry(index) {
-    return (index >= Global.csvLines.length || index < 1 || Global.csvLines[index].indexOf(',') == -1)
+    return (index >= Global.csvLines.length || Global.csvLines[index].indexOf(',') == -1)
         ? "(undefined)" : Global.csvLines[index].split(",")[2];
 }
 
 function getCompetitorWcaId(index) {
-    var wcaId = (index >= Global.csvLines.length || index < 1 || Global.csvLines[index].indexOf(',') == -1)
+    var wcaId = (index >= Global.csvLines.length || Global.csvLines[index].indexOf(',') == -1)
         ? "(undefined)" : Global.csvLines[index].split(",")[3];
     return (wcaId.length == 0) ? stringForNoWcaId() : wcaId;
 }
