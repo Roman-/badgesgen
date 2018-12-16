@@ -35,7 +35,7 @@ function addLabel(source) {
     }
 
     // show
-    addControl("Visible", $("<input type='checkbox' checked/>").change(function() {
+    addControl("Visible", $("<input type='checkbox' "+(Global.defaults[source].visible?"checked":"")+"/>").change(function() {
         l.visible = this.checked;
         changeVisibility(l.div, this.checked);
     }));
@@ -141,9 +141,12 @@ function updateLabelPreview(l) {
 function locateLableInTheMid(div) {
     var badge = $("#editImage");
     var badgePos = badge.offset();
+    /*
     var posTop = (Global.labels.length == 0) ?
         badgePos.top + (badge.innerHeight() - div.innerHeight())/2 :
         Global.labels[Global.labels.length - 1].div.position().top + Global.labels[Global.labels.length - 1].div.innerHeight();
+        */
+    var posTop = Global.labelPositions[Global.labels.length];
     var posLeft = badgePos.left + (badge.innerWidth() - div.innerWidth())/2;
     div.css({
         position:'absolute',

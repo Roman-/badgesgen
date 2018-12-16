@@ -11,6 +11,7 @@ Global.badgeCols = 0; // how many badge to fit in page horisontally
 Global.badgeRows = 0; // how many badge to fit in page vertically
 Global.badgeExtraPages = 0; // how many extra pages with empty badges to print
 Global.pt2mm = 25.4 / 72; // point to millimeter ratio
+Global.labelPositions = [205, 332, 470, 0]; // label default positions (top)
 
 // competition label setup
 Global.labels = [];
@@ -23,27 +24,30 @@ var LayoutsEnum = Object.freeze({"set":1, "edit":2, "pdf":3});
 // default settings for labels
 Global.defaults = {
     name : {
+        visible: true,
         size: 45,
         multiline: true,
         centered: true,
         bold: true,
-        color: "#000000",
+        color: "#ffffff",
         fontName: "helvetica"
     },
     country : {
-        size: 35,
+        visible: true,
+        size: 33,
         multiline: false,
         centered: true,
-        bold: false,
-        color: "#000044",
-        fontName: "times"
+        bold: true,
+        color: "#ffffff",
+        fontName: "helvetica"
     },
     wcaid : {
+        visible: false,
         size: 25,
         multiline: false,
         centered: false,
         bold: false,
-        color: "#000011",
+        color: "#ffffff",
         fontName: "courier"
     }
 };
