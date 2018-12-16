@@ -33,7 +33,6 @@ function extractCsvLines(s) {
     arr.forEach(function(line) {
         if (validateCsvLine(line)) {// not first and not empty
             result.push(line);
-            console.log("pushing: " + line);
         }
     });
     return result;

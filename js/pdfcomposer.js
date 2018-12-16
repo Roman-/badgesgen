@@ -54,12 +54,18 @@ function drawLabel(doc, label, x, y, csvItr) {
         [labelText.substring(0, spaceIndex), labelText.substring(spaceIndex+1)] :
         [labelText];
     parts.forEach(function(namePart) {
+        var textSize = label.rect.height / Global.pt2mm;
+        var realTextWidth = doc.getStringUnitWidth(namePart) * textSize * Global.pt2mm;
+        const widthThreshold = 0.95; // if label is longer than 95% of the badge width, this is bad
+        var adjustedHeight = (realTextWidth > Global.badgeW * widthThreshold) ?
+            label.rect.height*(Global.badgeW / realTextWidth * widthThreshold) :
+            label.rect.height;
         drawTextInRect(
             doc, namePart, label.centered,
             x + label.rect.x,
             y + label.rect.y + label.rect.height + (lineNumber++) * (label.rect.height + Global.lineHeightProportion),
             label.rect.width,
-            label.rect.height);
+            adjustedHeight);
     });
 }
 
@@ -72,11 +78,10 @@ function terminatePdf(doc) {
 
 function drawTextInRect(doc, text, centered, x, y, rectWidth, rectHeight) {
     // adjust Text size based on rectWidth
-    var pt2mm = 25.4 / 72;
-    var textSize = rectHeight / pt2mm;
+    var textSize = rectHeight / Global.pt2mm;
     doc.setFontSize(textSize);
 
-    var realTextWidth = doc.getStringUnitWidth(text) * textSize * pt2mm;
+    var realTextWidth = doc.getStringUnitWidth(text) * textSize * Global.pt2mm;
 
     if (centered)
         x -= (realTextWidth - rectWidth)/2;

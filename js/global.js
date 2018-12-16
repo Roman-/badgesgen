@@ -10,6 +10,7 @@ Global.badgeH = 0;    // badge physical height in millimeters
 Global.badgeCols = 0; // how many badge to fit in page horisontally
 Global.badgeRows = 0; // how many badge to fit in page vertically
 Global.badgeExtraPages = 0; // how many extra pages with empty badges to print
+Global.pt2mm = 25.4 / 72; // point to millimeter ratio
 
 // competition label setup
 Global.labels = [];
